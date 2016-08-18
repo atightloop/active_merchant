@@ -97,7 +97,7 @@ module ActiveMerchant #:nodoc:
           end
           r.process do
             post = create_post_for_auth_or_purchase(money, payment, options)
-            commit(:post, 'charges', post, options)
+            commit(:post, 'customers', post, options)
           end
         end.responses.last
       end
