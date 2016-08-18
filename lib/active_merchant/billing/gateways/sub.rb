@@ -85,7 +85,6 @@ module ActiveMerchant #:nodoc:
       #
       #   purchase(money, nil, { :customer => id, ... })
       def purchase(money, payment, options = {})
-        logger.debug "tedfljdf3 #{options}"
         if ach?(payment)
           direct_bank_error = "Direct bank account transactions are not supported. Bank accounts must be stored and verified before use."
           return Response.new(false, direct_bank_error)
@@ -292,6 +291,7 @@ module ActiveMerchant #:nodoc:
           post[:description] = options[:description]
           post[:statement_descriptor] = options[:statement_description]
           post[:receipt_email] = options[:receipt_email] if options[:receipt_email]
+          ActiveMerchant.deprecated "planName #{options[:plan]}"
           post[:plan]= options[:plan]
           add_customer(post, payment, options)
           add_flags(post, options)
