@@ -330,7 +330,7 @@ module ActiveMerchant #:nodoc:
       def add_customer_data(post, options)
         metadata_options = [:description, :ip, :user_agent, :referrer]
         post.update(options.slice(*metadata_options))
-        ActiveMerchant.deprecated "planName #{options[:plan]}"
+        ActiveMerchant.deprecated "planName"
         post[:external_id] = options[:order_id]
         post[:payment_user_agent] = "Stripe/v1 ActiveMerchantBindings/#{ActiveMerchant::VERSION}"
         
