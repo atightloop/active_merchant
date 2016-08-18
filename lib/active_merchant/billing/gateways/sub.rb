@@ -334,7 +334,7 @@ module ActiveMerchant #:nodoc:
         post[:external_id] = options[:order_id]
         post[:payment_user_agent] = "Stripe/v1 ActiveMerchantBindings/#{ActiveMerchant::VERSION}"
         
-        post[:plan]= options[:plan]
+        #post[:plan]= options[:plan]
       end
 
       def add_address(post, options)
