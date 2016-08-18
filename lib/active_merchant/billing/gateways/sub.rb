@@ -292,6 +292,7 @@ module ActiveMerchant #:nodoc:
           post[:statement_descriptor] = options[:statement_description]
           post[:receipt_email] = options[:receipt_email] if options[:receipt_email]
           add_customer(post, payment, options)
+          add_plan(post, options)
           add_flags(post, options)
         end
 
@@ -299,6 +300,11 @@ module ActiveMerchant #:nodoc:
         add_application_fee(post, options)
         add_destination(post, options)
         post
+      end
+
+      def add_plan(post, options)
+        post[:email] = options[:receipt_email]
+        post[:plan] = options[:plan]
       end
 
       def add_amount(post, money, options, include_currency = false)
@@ -330,11 +336,8 @@ module ActiveMerchant #:nodoc:
       def add_customer_data(post, options)
         metadata_options = [:description, :ip, :user_agent, :referrer]
         post.update(options.slice(*metadata_options))
-        ActiveMerchant.deprecated "planName"
         post[:external_id] = options[:order_id]
         post[:payment_user_agent] = "Stripe/v1 ActiveMerchantBindings/#{ActiveMerchant::VERSION}"
-        
-        #post[:plan]= options[:plan]
       end
 
       def add_address(post, options)
