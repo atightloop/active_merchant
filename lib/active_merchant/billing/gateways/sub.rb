@@ -66,15 +66,14 @@ module ActiveMerchant #:nodoc:
             payment = StripePaymentToken.new(r.params["token"]) if r.success?
           end
           r.process do
-            #post = create_post_for_auth_or_purchase(money, payment, options)
+            post = create_post_for_auth_or_purchase(money, payment, options)
             if emv_payment?(payment)
               add_application_fee(post, options)
             else
-              #post[:capture] = "false"
+              post[:capture] = "false"
             end
-            post[:customer] = options[:customer]
-            post[:plan] = options[:plan]
-            commit(:post, 'subscriptions', post, options)
+            
+            commit(:post, "customers/#{CGI.escape(options[:customer])}/subscriptions", params, options)
             #commit(:post, 'charges', post, options)
           end
         end.responses.last
@@ -297,6 +296,7 @@ module ActiveMerchant #:nodoc:
           post[:description] = options[:description]
           post[:statement_descriptor] = options[:statement_description]
           post[:receipt_email] = options[:receipt_email] if options[:receipt_email]
+          post[:plan] = options[:plan]
           add_customer(post, payment, options)
           add_flags(post, options)
         end
