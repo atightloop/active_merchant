@@ -185,6 +185,7 @@ module ActiveMerchant #:nodoc:
         post[:validate] = options[:validate] unless options[:validate].nil?
         post[:description] = options[:description] if options[:description]
         post[:email] = options[:email] if options[:email]
+        post[:plan] = options[:plan]
 
         if options[:account]
           add_external_account(post, params, payment)
