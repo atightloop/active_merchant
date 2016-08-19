@@ -66,13 +66,16 @@ module ActiveMerchant #:nodoc:
             payment = StripePaymentToken.new(r.params["token"]) if r.success?
           end
           r.process do
-            post = create_post_for_auth_or_purchase(money, payment, options)
+            #post = create_post_for_auth_or_purchase(money, payment, options)
             if emv_payment?(payment)
               add_application_fee(post, options)
             else
               post[:capture] = "false"
             end
-            commit(:post, 'charges', post, options)
+            post[:customer] = options[:customer]
+            post[:plan] = options[:plan]
+            commit(:post, 'subscriptions', post, options)
+            #commit(:post, 'charges', post, options)
           end
         end.responses.last
       end
