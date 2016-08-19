@@ -67,7 +67,7 @@ module ActiveMerchant #:nodoc:
           end
           r.process do
             if options[:plan]
-              post = create_post_for_plan
+              post = create_post_for_plan(options)
             else
               post = create_post_for_auth_or_purchase(money, payment, options)
             end
