@@ -289,7 +289,7 @@ module ActiveMerchant #:nodoc:
 
       def create_post_for_plan(options)
         post = {}
-        post[:description] = "add to plan #{options[:plan]}to customer"
+        post[:description] = "add to plan #{options[:plan]} to customer"
         post[:plan] = options[:plan]
         post[:customer] = options[:customer]
 
