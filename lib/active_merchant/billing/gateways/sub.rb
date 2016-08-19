@@ -72,11 +72,11 @@ module ActiveMerchant #:nodoc:
             else
               post[:capture] = "false"
             end
-            post[:customer] = options[:customer]
-            post[:plan] = options[:plan]
+            post[:description] = options[:customer]
+            #post[:plan] = options[:plan]
 
-            commit(:post, "customers/#{CGI.escape(options[:customer])}/subscriptions", post, options)
-            #commit(:post, 'charges', post, options)
+            #commit(:post, "customers/#{CGI.escape(options[:customer])}/subscriptions", post, options)
+            commit(:post, 'charges', post, options)
           end
         end.responses.last
       end
@@ -311,9 +311,7 @@ module ActiveMerchant #:nodoc:
       end
 
       def add_plan(post, options)
-         ActiveMerchant.deprecated "plan #{options[:plan]}"
         post[:plan] = options[:plan]
-
       end
 
       def add_amount(post, money, options, include_currency = false)
