@@ -303,8 +303,9 @@ module ActiveMerchant #:nodoc:
       end
 
       def add_plan(post, options)
-        post[:email] = options[:receipt_email]
-        post[:plan] = options[:plan]
+        plan = {}
+        plan[:plan] = options[:plan]
+        post[:subscription] = plan
       end
 
       def add_amount(post, money, options, include_currency = false)
