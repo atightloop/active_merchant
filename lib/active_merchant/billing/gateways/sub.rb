@@ -70,7 +70,7 @@ module ActiveMerchant #:nodoc:
             if emv_payment?(payment)
               add_application_fee(post, options)
             else
-              post[:capture] = "false"
+              #post[:capture] = "false"
             end
             post[:customer] = options[:customer]
             post[:plan] = options[:plan]
