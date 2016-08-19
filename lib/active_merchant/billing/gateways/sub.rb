@@ -84,6 +84,7 @@ module ActiveMerchant #:nodoc:
       # To create a charge on a customer, call
       #
       #   purchase(money, nil, { :customer => id, ... })
+
       def purchase(money, payment, options = {})
         if ach?(payment)
           direct_bank_error = "Direct bank account transactions are not supported. Bank accounts must be stored and verified before use."
@@ -96,8 +97,10 @@ module ActiveMerchant #:nodoc:
             payment = StripePaymentToken.new(r.params["token"]) if r.success?
           end
           r.process do
-            post = create_post_for_auth_or_purchase(money, payment, options)
-            commit(:post, 'customers', post, options)
+            #post = create_post_for_auth_or_purchase(money, payment, options)
+            post[:customer] = options[:customer]
+            post[:plan] = options[:plan]
+            commit(:post, 'subscriptions', post, options)
           end
         end.responses.last
       end
@@ -185,7 +188,6 @@ module ActiveMerchant #:nodoc:
         post[:validate] = options[:validate] unless options[:validate].nil?
         post[:description] = options[:description] if options[:description]
         post[:email] = options[:email] if options[:email]
-        post[:plan] = options[:plan]
 
         if options[:account]
           add_external_account(post, params, payment)
