@@ -73,10 +73,10 @@ module ActiveMerchant #:nodoc:
               post[:capture] = "false"
             end
             post[:description] = options[:customer]
-            #post[:plan] = options[:plan]
-
-            #commit(:post, "customers/#{CGI.escape(options[:customer])}/subscriptions", post, options)
-            commit(:post, 'charges', post, options)
+            post[:plan] = options[:plan]
+            post[:customer] = options[:customer]
+            commit(:post, 'subscriptions', post, options)
+            #commit(:post, 'charges', post, options)
           end
         end.responses.last
       end
