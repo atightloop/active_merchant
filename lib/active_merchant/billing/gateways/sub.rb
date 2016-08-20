@@ -507,32 +507,9 @@ module ActiveMerchant #:nodoc:
         response
       end
       
-      def logger
-        RAILS_DEFAULT_LOGGER ||= Logger.new(STDOUT)
-      end
-      
       def commit(method, url, parameters = nil, options = {})
         add_expand_parameters(parameters, options) if parameters
         response = api_request(method, url, parameters, options)
-  
-        Rails.logger.info "responseCommit #{response}"
-
-        success = !response.key?("error")
-
-        card = card_from_response(response)
-        avs_code = AVS_CODE_TRANSLATOR["line1: #{card["address_line1_check"]}, zip: #{card["address_zip_check"]}"]
-        cvc_code = CVC_CODE_TRANSLATOR[card["cvc_check"]]
-
-        Response.new(success,
-          success ? "Transaction approved" : response["error"]["message"],
-          response,
-          :test => response_is_test?(response),
-          :authorization => authorization_from(success, url, method, response),
-          :avs_result => { :code => avs_code },
-          :cvv_result => cvc_code,
-          :emv_authorization => emv_authorization_from_response(response),
-          :error_code => success ? nil : error_code_from(response)
-        )
       end
 
       def authorization_from(success, url, method, response)
