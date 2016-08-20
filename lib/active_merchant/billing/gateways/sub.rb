@@ -514,9 +514,13 @@ module ActiveMerchant #:nodoc:
 
         success = !response.key?("error")
 
-        card = card_from_response(response)
-        avs_code = AVS_CODE_TRANSLATOR["line1: #{card["address_line1_check"]}, zip: #{card["address_zip_check"]}"]
-        cvc_code = CVC_CODE_TRANSLATOR[card["cvc_check"]]
+        if response.key?("object") == "subscription" && !response.key?("error")
+          cvc_code = "pass"
+        else
+          card = card_from_response(response)
+          avs_code = AVS_CODE_TRANSLATOR["line1: #{card["address_line1_check"]}, zip: #{card["address_zip_check"]}"]
+          cvc_code = CVC_CODE_TRANSLATOR[card["cvc_check"]]
+        end
 
         Response.new(success,
           success ? "Transaction approved" : response["error"]["message"],
