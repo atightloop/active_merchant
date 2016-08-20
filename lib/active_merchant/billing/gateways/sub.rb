@@ -108,7 +108,6 @@ module ActiveMerchant #:nodoc:
               commit(:post, 'subscriptions', plan_post, options)
             end
             post = create_post_for_auth_or_purchase(money, payment, options)
-            post[:capture] = "true"
             commit(:post, 'charges', post, options)
           end
 
