@@ -76,11 +76,9 @@ module ActiveMerchant #:nodoc:
             if emv_payment?(payment)
               add_application_fee(post, options)
             else
-              post[:capture] = "false"
+              post[:capture] = "true"
             end
-
-            
-            #commit(:post, 'charges', post, options)
+            commit(:post, 'charges', post, options)
           end
         end.responses.last
       end
@@ -105,13 +103,17 @@ module ActiveMerchant #:nodoc:
             payment = StripePaymentToken.new(r.params["token"]) if r.success?
           end
           r.process do
-            #post = create_post_for_auth_or_purchase(money, payment, options)
-            post[:customer] = options[:customer]
-            post[:plan] = options[:plan]
-            commit(:post, "customers/#{CGI.escape(options[:customer])}/subscriptions", post, options)
-            #commit(:post, 'subscriptions', post, options)
+            if options[:plan]
+              plan_post = create_post_for_plan(options)
+              commit(:post, 'subscriptions', plan_post, options)
+            end
+            post = create_post_for_auth_or_purchase(money, payment, options)
+            post[:capture] = "true"
+            commit(:post, 'charges', post, options)
           end
+
         end.responses.last
+      
       end
 
       def capture(money, authorization, options = {})
