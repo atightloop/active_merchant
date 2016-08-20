@@ -511,7 +511,7 @@ module ActiveMerchant #:nodoc:
         add_expand_parameters(parameters, options) if parameters
         response = api_request(method, url, parameters, options)
   
-        Rails.logger.debug "responseCommit #{response}"
+        Rails.logger.info "responseCommit #{response}"
 
         success = !response.key?("error")
 
