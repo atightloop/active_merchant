@@ -510,6 +510,7 @@ module ActiveMerchant #:nodoc:
       def commit(method, url, parameters = nil, options = {})
         add_expand_parameters(parameters, options) if parameters
         response = api_request(method, url, parameters, options)
+        logger = Logger.new(Rails.root.join("log", "development.log"))
         logger.debug "responseCommit #{response}"
 
         success = !response.key?("error")
