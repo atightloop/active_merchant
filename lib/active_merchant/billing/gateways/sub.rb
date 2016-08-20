@@ -78,7 +78,7 @@ module ActiveMerchant #:nodoc:
             else
               post[:capture] = "true"
             end
-            commit(:post, 'charges', post, options)
+            #commit(:post, 'charges', post, options)
           end
         end.responses.last
       end
@@ -108,7 +108,7 @@ module ActiveMerchant #:nodoc:
               commit(:post, 'subscriptions', plan_post, options)
             end
             post = create_post_for_auth_or_purchase(money, payment, options)
-            commit(:post, 'charges', post, options)
+            #commit(:post, 'charges', post, options)
           end
 
         end.responses.last
