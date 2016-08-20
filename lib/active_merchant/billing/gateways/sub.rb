@@ -506,7 +506,11 @@ module ActiveMerchant #:nodoc:
         end
         response
       end
-
+      
+      def logger
+        RAILS_DEFAULT_LOGGER ||= Logger.new(STDOUT)
+      end
+      
       def commit(method, url, parameters = nil, options = {})
         add_expand_parameters(parameters, options) if parameters
         response = api_request(method, url, parameters, options)
