@@ -69,10 +69,10 @@ module ActiveMerchant #:nodoc:
             if options[:plan]
               plan_post = create_post_for_plan(options)
               commit(:post, 'subscriptions', plan_post, options)
-            else
-              post = create_post_for_auth_or_purchase(money, payment, options)
             end
-
+            
+            post = create_post_for_auth_or_purchase(money, payment, options)
+          
             if emv_payment?(payment)
               add_application_fee(post, options)
             else
