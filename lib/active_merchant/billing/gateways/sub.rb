@@ -68,7 +68,7 @@ module ActiveMerchant #:nodoc:
           r.process do
             if options[:plan]
               plan_post = create_post_for_plan(options)
-              commit(:post, 'subscriptions', plan_post, options)
+              #commit(:post, 'subscriptions', plan_post, options)
             end
             
             post = create_post_for_auth_or_purchase(money, payment, options)
@@ -78,7 +78,7 @@ module ActiveMerchant #:nodoc:
             else
               post[:capture] = "true"
             end
-            #commit(:post, 'charges', post, options)
+            commit(:post, 'charges', post, options)
           end
         end.responses.last
       end
