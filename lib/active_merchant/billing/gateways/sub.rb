@@ -532,7 +532,7 @@ module ActiveMerchant #:nodoc:
           :authorization => authorization_from(success, url, method, response),
           :avs_result => { :code => avs_code },
           :cvv_result => cvc_code,
-          :emv_authorization =>,emv_authorization
+          :emv_authorization => emv_authorization,
           :error_code => success ? nil : error_code_from(response)
         )
       end
