@@ -530,7 +530,7 @@ module ActiveMerchant #:nodoc:
           emv_authorization =  emv_authorization_from_response(response)
 
           Response.new(success,
-          success ? "Transaction approved" : response["error"]["message"],
+          success ? "Transaction approved" ,
           response,
           :test => response_is_test?(response),
           :authorization => authorization_from(success, url, method, response),
