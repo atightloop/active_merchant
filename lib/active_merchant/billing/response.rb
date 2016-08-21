@@ -26,7 +26,7 @@ module ActiveMerchant #:nodoc:
         @error_code = options[:error_code]
         @emv_authorization = options[:emv_authorization]
 
-        @avs_result = #if options[:avs_result].kind_of?(AVSResult)
+        @avs_result = if options[:avs_result].kind_of?(AVSResult)
           options[:avs_result].to_hash
         else
           AVSResult.new(options[:avs_result]).to_hash
