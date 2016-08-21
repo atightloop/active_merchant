@@ -78,7 +78,7 @@ module ActiveMerchant #:nodoc:
               post[:capture] = "true"
             end
             
-            #commit(:post, 'charges', post, options)
+            commit(:post, 'charges', post, options)
           end
         end.responses.last
       end
@@ -109,6 +109,31 @@ module ActiveMerchant #:nodoc:
             end
             post = create_post_for_auth_or_purchase(money, payment, options)
             #commit(:post, 'charges', post, options)
+          end
+
+        end.responses.last
+      
+      end
+      
+      def subscribe(money, payment, options ={})
+        
+        if ach?(payment)
+          direct_bank_error = "Direct bank account transactions are not supported. Bank accounts must be stored and verified before use."
+          return Response.new(false, direct_bank_error)
+        end
+
+        MultiResponse.run do |r|
+          if payment.is_a?(ApplePayPaymentToken)
+            r.process { tokenize_apple_pay_token(payment) }
+            payment = StripePaymentToken.new(r.params["token"]) if r.success?
+          end
+          r.process do
+            if options[:plan]
+              plan_post = create_post_for_plan(options)
+              commit(:post, 'subscriptions', plan_post, options)
+            end
+            post = create_post_for_auth_or_purchase(money, payment, options)
+            commit(:post, 'charges', post, options)
           end
 
         end.responses.last
