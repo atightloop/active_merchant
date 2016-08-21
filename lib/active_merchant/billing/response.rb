@@ -20,7 +20,6 @@ module ActiveMerchant #:nodoc:
 
       def initialize(success, message, params = {}, options = {})
         
-        if options[:subscription] != "subscription"
           @success, @message, @params = success, message, params.stringify_keys
           @test = options[:test] || false
           @authorization = options[:authorization]
@@ -39,10 +38,8 @@ module ActiveMerchant #:nodoc:
           else
             CVVResult.new(options[:cvv_result]).to_hash
           end
-        else
-          @success = true
-        end
       end
+      
     end
 
     class MultiResponse < Response
