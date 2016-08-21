@@ -517,9 +517,10 @@ module ActiveMerchant #:nodoc:
         if response.key?("object") == "subscription" && !response.key?("error")
          
           Response.new(success,
-          success ? "Transaction approved",
+          success ? "Transaction approved" : response["error"]["message"],
           response,
           :subscription => "subscription",
+          :authorization => authorization_from(success, url, method, response),
           :error_code => success ? nil : error_code_from(response)
         )
         else
