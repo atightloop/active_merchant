@@ -60,7 +60,12 @@ module ActiveMerchant #:nodoc:
       end
 
       def authorize(money, payment, options = {})
-
+        MultiResponse.run do |r|
+          if payment.is_a?(ApplePayPaymentToken)
+            r.process { tokenize_apple_pay_token(payment) }
+            payment = StripePaymentToken.new(r.params["token"]) if r.success?
+          end
+          r.process do
             if options[:plan]
               plan_post = create_post_for_plan(options)
               commit(:post, 'subscriptions', plan_post, options)
@@ -74,6 +79,8 @@ module ActiveMerchant #:nodoc:
             end
             
             #commit(:post, 'charges', post, options)
+          end
+        end.responses.last
       end
 
       # To create a charge on a card or a token, call
@@ -89,14 +96,23 @@ module ActiveMerchant #:nodoc:
           direct_bank_error = "Direct bank account transactions are not supported. Bank accounts must be stored and verified before use."
           return Response.new(false, direct_bank_error)
         end
-          
-        if options[:plan]
-          plan_post = create_post_for_plan(options)
-          commit(:post, 'subscriptions', plan_post, options)
-        end
-        post = create_post_for_auth_or_purchase(money, payment, options)
-        #commit(:post, 'charges', post, options)
-          
+
+        MultiResponse.run do |r|
+          if payment.is_a?(ApplePayPaymentToken)
+            r.process { tokenize_apple_pay_token(payment) }
+            payment = StripePaymentToken.new(r.params["token"]) if r.success?
+          end
+          r.process do
+            if options[:plan]
+              plan_post = create_post_for_plan(options)
+              commit(:post, 'subscriptions', plan_post, options)
+            end
+            post = create_post_for_auth_or_purchase(money, payment, options)
+            #commit(:post, 'charges', post, options)
+          end
+
+        end.responses.last
+      
       end
 
       def capture(money, authorization, options = {})
@@ -499,12 +515,18 @@ module ActiveMerchant #:nodoc:
         success = !response.key?("error")
 
         if response.key?("object") == "subscription" && !response.key?("error")
-         
-          Response.new(success,
+          avs_code = AVS_CODE_TRANSLATOR["line1: pass, zip: pass"]
+          cvc_code = CVC_CODE_TRANSLATOR['pass']
+          emv_authorization =  emv_authorization_from_response(response)
+          Response.new(success = true,
             success ? "Transaction approved" : response["error"]["message"],
             response,
+            :test => response_is_test?(response),
             :subscription => "subscription",
             :authorization => response["id"],
+            :avs_result => { :code => avs_code },
+            :cvv_result => cvc_code,
+            :emv_authorization => {},
             :error_code => success ? nil : error_code_from(response)
           )
         else
