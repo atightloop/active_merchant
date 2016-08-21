@@ -4,10 +4,10 @@ module ActiveMerchant #:nodoc:
     end
 
     class Response
-      attr_reader :params, :message, :test, :authorization, :avs_result, :cvv_result, :error_code, :emv_authorization
+      attr_reader :params, :message, :test, :authorization, :avs_result, :cvv_result, :error_code, :emv_authorization, :subscription
 
       def success?
-        @success
+        @success = @authorization
       end
 
       def test?
