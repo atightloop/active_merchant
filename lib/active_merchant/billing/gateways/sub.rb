@@ -517,12 +517,12 @@ module ActiveMerchant #:nodoc:
         if response.key?("object") == "subscription" && !response.key?("error")
          
           Response.new(success,
-          success ? "Transaction approved" : response["error"]["message"],
-          response,
-          :subscription => "subscription",
-          :authorization => authorization_from(success, url, method, response),
-          :error_code => success ? nil : error_code_from(response)
-        )
+            success ? "Transaction approved" : response["error"]["message"],
+            response,
+            :subscription => "subscription",
+            :authorization => response["id"],
+            :error_code => success ? nil : error_code_from(response)
+          )
         else
           card = card_from_response(response)
           avs_code = AVS_CODE_TRANSLATOR["line1: #{card["address_line1_check"]}, zip: #{card["address_zip_check"]}"]
@@ -530,15 +530,15 @@ module ActiveMerchant #:nodoc:
           emv_authorization =  emv_authorization_from_response(response)
 
           Response.new(success,
-          success ? "Transaction approved" : response["error"]["message"],
-          response,
-          :test => response_is_test?(response),
-          :authorization => authorization_from(success, url, method, response),
-          :avs_result => { :code => avs_code },
-          :cvv_result => cvc_code,
-          :emv_authorization => emv_authorization,
-          :error_code => success ? nil : error_code_from(response)
-        )
+            success ? "Transaction approved" : response["error"]["message"],
+            response,
+            :test => response_is_test?(response),
+            :authorization => authorization_from(success, url, method, response),
+            :avs_result => { :code => avs_code },
+            :cvv_result => cvc_code,
+            :emv_authorization => emv_authorization,
+            :error_code => success ? nil : error_code_from(response)
+          )
         end
 
         
