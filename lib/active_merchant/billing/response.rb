@@ -7,7 +7,7 @@ module ActiveMerchant #:nodoc:
       attr_reader :params, :message, :test, :authorization, :avs_result, :cvv_result, :error_code, :emv_authorization, :subscription
 
       def success?
-        @success = @authorization
+        @success
       end
 
       def test?
@@ -20,22 +20,28 @@ module ActiveMerchant #:nodoc:
 
       def initialize(success, message, params = {}, options = {})
         @success, @message, @params = success, message, params.stringify_keys
-        @test = options[:test] || false
-        @authorization = options[:authorization]
-        @fraud_review = options[:fraud_review]
-        @error_code = options[:error_code]
-        @emv_authorization = options[:emv_authorization]
+        if options[:subscription] != "subscription"
+          @test = options[:test] || false
+          @authorization = options[:authorization]
+          @fraud_review = options[:fraud_review]
+          @error_code = options[:error_code]
+          @emv_authorization = options[:emv_authorization]
 
-        @avs_result = if options[:avs_result].kind_of?(AVSResult)
-          options[:avs_result].to_hash
-        else
-          AVSResult.new(options[:avs_result]).to_hash
-        end
+          @avs_result = if options[:avs_result].kind_of?(AVSResult)
+            options[:avs_result].to_hash
+          else
+            AVSResult.new(options[:avs_result]).to_hash
+          end
 
-        @cvv_result = if options[:cvv_result].kind_of?(CVVResult)
-          options[:cvv_result].to_hash
+          @cvv_result = if options[:cvv_result].kind_of?(CVVResult)
+            options[:cvv_result].to_hash
+          else
+            CVVResult.new(options[:cvv_result]).to_hash
+          end
         else
-          CVVResult.new(options[:cvv_result]).to_hash
+          @authorization = options[:authorization]
+          @fraud_review = options[:fraud_review]
+          @error_code = options[:error_code]
         end
       end
     end
