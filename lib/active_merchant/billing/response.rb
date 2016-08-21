@@ -19,8 +19,9 @@ module ActiveMerchant #:nodoc:
       end
 
       def initialize(success, message, params = {}, options = {})
-        @success, @message, @params = success, message, params.stringify_keys
+        
         if options[:subscription] != "subscription"
+          @success, @message, @params = success, message, params.stringify_keys
           @test = options[:test] || false
           @authorization = options[:authorization]
           @fraud_review = options[:fraud_review]
@@ -39,9 +40,7 @@ module ActiveMerchant #:nodoc:
             CVVResult.new(options[:cvv_result]).to_hash
           end
         else
-          @authorization = options[:authorization]
-          @fraud_review = options[:fraud_review]
-          @error_code = options[:error_code]
+          @success = true
         end
       end
     end
