@@ -17,6 +17,10 @@ module ActiveMerchant #:nodoc:
       def fraud_review?
         @fraud_review
       end
+      
+      def subscription?
+        @subscription
+      end
 
       def initialize(success, message, params = {}, options = {})
         
@@ -24,6 +28,7 @@ module ActiveMerchant #:nodoc:
           @test = options[:test] || false
           @authorization = options[:authorization]
           @fraud_review = options[:fraud_review]
+          @subscription = options[:subscription]
           @error_code = options[:error_code]
           @emv_authorization = options[:emv_authorization]
 
@@ -39,7 +44,7 @@ module ActiveMerchant #:nodoc:
             CVVResult.new(options[:cvv_result]).to_hash
           end
       end
-      
+
     end
 
     class MultiResponse < Response
